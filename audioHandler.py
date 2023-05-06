@@ -1,45 +1,56 @@
 import pyaudio
-import os
-import wave
 
-CHUNK = 1024
-FORMAT = pyaudio.paInt16
-CHANNELS = 2
+# Initialize the audioHandler
+audioHandler = pyaudio.PyAudio()
+
+# Define audio audioHandlerrameters
+CHANNELS = 1
 RATE = 44100
-WAVE_OUTPUT_FILENAME = "/tmp/input.audio.fifo"
+CHUNK = 1024
 
-audioController = pyaudio.PyAudio()
-device_index = None
-for i in range(audioController.get_device_count()):
-    if "USB" in audioController.get_device_info_by_index(i)['name']: # USB microphone
-        device_index = i
-        break
-    
-if device_index is None:
-    print("No USB microphone found")
-    exit()
-
-microphoneStream = audioController.open(format=pyaudio.paInt16, channels=1, rate=44100, input=True, frames_per_buffer=1024, input_device_index=device_index)
-
-os.system("mkfifo " + WAVE_OUTPUT_FILENAME)
-
-print("* recording")
-
-wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
-wf.setnchannels(CHANNELS)
-wf.setsampwidth(audioController.get_sample_size(FORMAT))
-wf.setframerate(RATE)
-
-while True:
-    try:
-        for i in range(0, int(RATE / CHUNK)):
-            data = microphoneStream.read(CHUNK)
-            data = bytes(data)
-            wf.writeframes(data)
-
-    except KeyboardInterrupt:
-        print("* recording stopped")
+# find the USB microphone and speaker
+id_index = None
+od_index = None
+for i in range(audioHandler.get_device_count()):
+    print(audioHandler.get_device_info_by_index(i))
+    if "USB" in audioHandler.get_device_info_by_index(i)['name']: # USB microphone
+        id_index = i
+    if "External" in audioHandler.get_device_info_by_index(i)['name']: # USB speaker
+        od_index = i
+    if id_index is not None and od_index is not None:
         break
         
-wf.close()
+    
+if id_index is None:
+    print("No USB microphone found")
+    exit()
+    
+if od_index is None:
+    print("No USB speaker found")
+    exit()
+    
+# Open audio stream for input
+stream_in = audioHandler.open(format=pyaudio.audioHandlerInt16,
+                    channels=CHANNELS,
+                    rate=RATE,
+                    input=True,
+                    frames_per_buffer=CHUNK, input_device_index=id_index)
 
+# Open audio stream for output
+stream_out = audioHandler.open(format=pyaudio.audioHandlerInt16,
+                     channels=CHANNELS,
+                     rate=RATE,
+                     output=True,
+                     frames_per_buffer=CHUNK, output_device_index=od_index)
+
+# Continuously read from the input stream and write to the output stream
+while True:
+    data = stream_in.read(CHUNK)
+    stream_out.write(data)
+
+# Clean up resources
+stream_in.stop_stream()
+stream_in.close()
+stream_out.stop_stream()
+stream_out.close()
+audioHandler.terminate()
