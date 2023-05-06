@@ -12,7 +12,6 @@ CHUNK = 1024
 id_index = None
 od_index = None
 for i in range(audioHandler.get_device_count()):
-    print(audioHandler.get_device_info_by_index(i))
     if "USB" in audioHandler.get_device_info_by_index(i)['name']: # USB microphone
         id_index = i
     if "External" in audioHandler.get_device_info_by_index(i)['name']: # USB speaker
@@ -30,14 +29,14 @@ if od_index is None:
     exit()
     
 # Open audio stream for input
-stream_in = audioHandler.open(format=pyaudio.audioHandlerInt16,
+stream_in = audioHandler.open(format=pyaudio.paInt16,
                     channels=CHANNELS,
                     rate=RATE,
                     input=True,
                     frames_per_buffer=CHUNK, input_device_index=id_index)
 
 # Open audio stream for output
-stream_out = audioHandler.open(format=pyaudio.audioHandlerInt16,
+stream_out = audioHandler.open(format=pyaudio.paInt16,
                      channels=CHANNELS,
                      rate=RATE,
                      output=True,
@@ -45,8 +44,12 @@ stream_out = audioHandler.open(format=pyaudio.audioHandlerInt16,
 
 # Continuously read from the input stream and write to the output stream
 while True:
-    data = stream_in.read(CHUNK)
-    stream_out.write(data)
+    try:
+        data = stream_in.read(CHUNK)
+        stream_out.write(data)
+    except KeyboardInterrupt:
+        print("\nStopping audioHandler")
+        exit()
 
 # Clean up resources
 stream_in.stop_stream()
