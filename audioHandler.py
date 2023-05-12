@@ -18,7 +18,7 @@ URL = 'http://localhost:' + str(config.PORT) + '/status'
 inputIndex = None
 outputIndex = None
 
-censor_mode = True
+censor_mode =False
 censor_next = True
 speaking_right_now = False
 word_detected = False
@@ -88,19 +88,18 @@ def startAudioCensorship():
     # Continuously read from the input stream and write to the output stream
     while True:
         try:
-            data = stream_in.read(CHUNK)
+            if not censor_mode:
+                if (requests.get(URL).text == "Censoring"):
+                    censor_mode = True
+            data = stream_in.read(CHUNK, exception_on_overflow = False)
             # depending on whether censor mode is on or not, either play back the audio or play back silence
-            if (requests.get(URL).text == "Censoring"):
-                censor_mode = True
-            else:
-                censor_mode = False
             if censor_mode:
                 # if the input data has low volume it means the user is changing words
                 # we need to censor random words
                 # if the input data has high volume it means the user is speaking
                 data_volume = np.mean(np.abs(np.frombuffer(data, dtype=np.float32)))*10000
                 volume.append(data_volume)
-                if data_volume > 800:
+                if data_volume > 1000:
                     if not speaking_right_now:
                         print("speaking")
                         speaking_right_now = True
@@ -118,7 +117,7 @@ def startAudioCensorship():
                         print("not speaking")
                 
                     speaking_right_now = False
-                    censor_next = np.random.rand() < 0.9
+                    censor_next = np.random.rand() < 0.4
                     stream_out.write(data)  
                     word_detected = False
                 

@@ -1,20 +1,89 @@
 <!DOCTYPE html>
 <html>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>****</title>
-    <link rel="stylesheet" href="style.css">
-<head>
-    <title>Vote</title>
-    <style></style>
+    <style>
+        /* Global styles */
+@font-face {
+  font-family: 'Graphik';
+  src: url('path/to/graphik.otf') format('opentype');
+  /* Add more font formats if necessary */
+}
+
+body {
+  font-family: 'Graphik', Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  background-color: #f1f1f1;
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+h2 {
+  color: #666;
+  margin-top: 20px;
+}
+
+p {
+  color: #888;
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+input[type="submit"] {
+  background-color: #f1f1f1;
+  color: #666;
+  border: none;
+  padding: 12px 24px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 10px;
+  border-radius: 8px;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1),
+    -4px -4px 8px rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+}
+
+input[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 10px rgba(0, 0, 0, 0.15),
+    -6px -6px 10px rgba(255, 255, 255, 0.7);
+}
+
+/* Custom styles */
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.vote-counts {
+  margin-top: 20px;
+}
+</style>
 </head>
 <body>
-    <h1>Start Speech</h1>
+    <h1>Shut The **** Up</h1>
     <form action="/startVote" method="POST">
         <input type="submit" name="start" value="Start">
     </form>
-    <h1>Vote</h1>
+    <h1>Vote for Censorship</h1>
     <form action="/" method="POST">
         <input type="submit" name="yes" value="Yes">
         <input type="submit" name="no" value="No">

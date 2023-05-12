@@ -1,7 +1,7 @@
 # flask app to get POST requests at /vote and return the results
 import config
 import subprocess
-
+import serial
 from flask import Flask, redirect, url_for, request, render_template
 app = Flask(__name__)
 
